@@ -1,18 +1,30 @@
+/**
+ *  Class specialized from GaitDataGeneration class for Trial 2
+ */
 package gaitanalyser.data;
 
 import java.io.IOException;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.xssf.usermodel.*;
-import org.json.simple.parser.ParseException;
 
-import gaitanalyser.GaitAnalyser;
-
+/**
+ * The Class GaitDataGenerationTrial2 is an specialized from GaitDataGeneration class 
+ * for the implementation of trial 2.
+ */
 public class GaitDataGenerationTrial2 extends GaitDataGeneration{
 	
 	
+	/**
+	 * Instantiates a new gait data generation trial 2.
+	 *
+	 * @param filePath the file path
+	 * @param footSize the foot size
+	 * @param makLeg the mak leg
+	 * @param threshold the threshold
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public GaitDataGenerationTrial2(String filePath, String footSize, String makLeg, int threshold) throws IOException{
 
 		super(filePath, footSize, makLeg);
@@ -21,6 +33,9 @@ public class GaitDataGenerationTrial2 extends GaitDataGeneration{
 	}
 	
 
+	/* (non-Javadoc)
+	 * @see gaitanalyser.data.GaitDataGeneration#channelsInitialization()
+	 */
 	public void channelsInitialization(){
 		
 		RAW_TIME = 0;		
@@ -45,6 +60,9 @@ public class GaitDataGenerationTrial2 extends GaitDataGeneration{
 	}
 	
 
+	/* (non-Javadoc)
+	 * @see gaitanalyser.data.GaitDataGeneration#setCalculatedDataValuesColumns()
+	 */
 	public void setCalculatedDataValuesColumns(){
 
 		TIME = 0;
@@ -141,6 +159,9 @@ public class GaitDataGenerationTrial2 extends GaitDataGeneration{
 	}
 
 
+	/* (non-Javadoc)
+	 * @see gaitanalyser.data.GaitDataGeneration#calculateExtraData()
+	 */
 	protected  void calculateExtraData(){
 
 		calculatePositionAngleData();        
@@ -160,10 +181,16 @@ public class GaitDataGenerationTrial2 extends GaitDataGeneration{
 
 	}
 
+	/* (non-Javadoc)
+	 * @see gaitanalyser.data.GaitDataGeneration#conversionPositionAngleValue(double)
+	 */
 	double conversionPositionAngleValue(double value) {		
 		return value;	
 	}
 	
+	/* (non-Javadoc)
+	 * @see gaitanalyser.data.GaitDataGeneration#calculateEulerData()
+	 */
 	public void calculateEulerData() {
 		
 		XSSFSheet rawSheet = workBook.getSheet("RAW");
@@ -194,6 +221,9 @@ public class GaitDataGenerationTrial2 extends GaitDataGeneration{
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see gaitanalyser.data.GaitDataGeneration#conversionPressureValue(double)
+	 */
 	double conversionPressureValue(double pressureValue) {		
 
 		if(pressureValue > INSOLE_THRESHOLD) 
@@ -203,6 +233,9 @@ public class GaitDataGenerationTrial2 extends GaitDataGeneration{
 		return pressureValue;
 	}
 		
+	/* (non-Javadoc)
+	 * @see gaitanalyser.data.GaitDataGeneration#calculateTreadThreshold(boolean)
+	 */
 	void calculateTreadThreshold(boolean mak) {
 
 		System.out.println("Calculate Tread Threshold");
@@ -265,6 +298,9 @@ public class GaitDataGenerationTrial2 extends GaitDataGeneration{
 	
 
 	
+	/**
+	 * Error handling.
+	 */
 	void errorHandling(){
 		
 		XSSFSheet sheet = workBook.getSheet("CALCULATED_DATA");
@@ -295,9 +331,12 @@ public class GaitDataGenerationTrial2 extends GaitDataGeneration{
 			}									
 		}
 		
-		System.out.println("Rows deleted for erros in Trial 4: " + deletedRows);		
+		System.out.println("Rows deleted for erros in Trial 2: " + deletedRows);		
 	}
 	
+	/* (non-Javadoc)
+	 * @see gaitanalyser.data.GaitDataGeneration#generateOutputFiles()
+	 */
 	public void generateOutputFiles() throws Exception {
 
 		System.out.println("Excel generation...");
@@ -328,37 +367,13 @@ public class GaitDataGenerationTrial2 extends GaitDataGeneration{
 		generateGaitParams(false);
 		generateDoubleStanceGaitParams(false);
 			
-		createFile(outputPath + ".xlsx");        
+		createFile(filePath + ".xlsx");        
 		System.out.println("Excel Done.");
 
 		generateSheetCSV();
 		System.out.println("CSVs Done.");
 
 	}
-	
-   public static void main(String args[]) throws IOException, InvalidFormatException, ParseException, Exception {
-		   
-	   
-//	   GaitDataGenerationTrial2 gaitData0 = new GaitDataGenerationTrial2("D:\\Ven sube a mi nube\\BME\\TFM\\Datas\\FINAL\\0_mbd-20180605-161145.txt.without_errors.txt", "M", "LEFT", 1200);
-//	   gaitData0.generateOutputFiles();
-	   GaitDataGenerationTrial2 gaitData11 = new GaitDataGenerationTrial2("D:\\Ven sube a mi nube\\BME\\TFM\\Datas\\FINAL\\1SG_mbd-20180516-094254_fixed.txt.without_errors.txt", "M", "LEFT", 1200);
-	   gaitData11.generateOutputFiles();
-//	   GaitDataGenerationTrial2 gaitData12 = new GaitDataGenerationTrial2("D:\\Ven sube a mi nube\\BME\\TFM\\Datas\\FINAL\\1SG_mbd-20180516-094316_fixed.txt.without_errors.txt", "M", "LEFT", 1200);
-//	   gaitData12.generateOutputFiles();
-//	   GaitDataGenerationTrial2 gaitData2 = new GaitDataGenerationTrial2("D:\\Ven sube a mi nube\\BME\\TFM\\Datas\\FINAL\\2JLU_mbd-20180516-112135_fixed.txt.without_errors.txt", "L", "LEFT", 1200);
-//	   gaitData2.generateOutputFiles();
-//	   GaitDataGenerationTrial2 gaitData31 = new GaitDataGenerationTrial2("D:\\Ven sube a mi nube\\BME\\TFM\\Datas\\FINAL\\3FM_mbd-20180516-120957_fixed.txt.without_errors.txt", "M", "LEFT", 1200);
-//	   gaitData31.generateOutputFiles();
-//	   GaitDataGenerationTrial2 gaitData32 = new GaitDataGenerationTrial2("D:\\Ven sube a mi nube\\BME\\TFM\\Datas\\FINAL\\3FM_mbd-20180516-121028_fixed.txt.without_errors.txt", "M", "LEFT", 1200);
-//	   gaitData32.generateOutputFiles();
-//	   GaitDataGenerationTrial2 gaitData4 = new GaitDataGenerationTrial2("D:\\Ven sube a mi nube\\BME\\TFM\\Datas\\FINAL\\4EOU_mbd-20180516-130443_fixed.txt.without_errors.txt", "M", "RIGHT", 1200);
-//	   gaitData4.generateOutputFiles();
-//	   GaitDataGenerationTrial2 gaitData6 = new GaitDataGenerationTrial2("D:\\Ven sube a mi nube\\BME\\TFM\\Datas\\FINAL\\6NA_mbd-20180516-165857_fixed.txt.without_errors.txt", "S", "RIGHT", 1200);
-//	   gaitData6.generateOutputFiles();
-	   		   
-   }          
-
-	
 	
 	
 }

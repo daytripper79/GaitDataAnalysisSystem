@@ -19,13 +19,24 @@ import javax.swing.JFileChooser;
 import java.awt.FlowLayout;
 
 
+/**
+ * The Class GaitAnalyserGui constitute the entry point to the application providing a friendly environment for the inexperienced user.
+ */
 public class GaitAnalyserGui extends JFrame{
 	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 		
+	/** The insole size. */
 	private String insoleSize;
+	
+	/** The input file with his absolute path. */
 	private String absolutePath;
+	
+	/** The trial. */
 	private String trial;
+	
+	/** The mak leg. */
 	private String makLeg;	
 	
 	/**
@@ -53,7 +64,7 @@ public class GaitAnalyserGui extends JFrame{
 		
 		JLabel lblTrial = new JLabel("Trial");
 		getContentPane().add(lblTrial);
-		String[] trialsCombo = { "TRIAL_2", "TRIAL_4"};
+		String[] trialsCombo = { "TRIAL_1", "TRIAL_2"};
 		JComboBox trialBox = new JComboBox(trialsCombo);
 		trialBox.setSelectedIndex(0);
 		getContentPane().add(trialBox);
@@ -78,18 +89,21 @@ public class GaitAnalyserGui extends JFrame{
 
         // Set default path
         String path = System.getProperty("user.dir");
-        String configFile = path +  "\\" + "gaitAnalyser.properties";		    
+        String configFile = path +  "\\" + "gaitanalyser.properties";		    
         Properties properties = new Properties();
         try {
         	properties.load(new FileInputStream(configFile));
-        } catch (Exception e) {}        
+        } catch (Exception e) { e.printStackTrace();}        
         // Create a file chooser
         String defaultDataPath =  properties.getProperty("DEFAULT_DATA_PATH");
-        System.out.println(defaultDataPath);
         
 		JButton chooserButton = new JButton("Select File");
 		getContentPane().add(chooserButton);		
 		chooserButton.addActionListener(new ActionListener() {
+			
+			/* (non-Javadoc)
+			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+			 */
 			public void actionPerformed(ActionEvent ae) {
 				JFileChooser fileChooser = new JFileChooser(defaultDataPath);
 				int returnValue = fileChooser.showOpenDialog(null);
@@ -109,15 +123,10 @@ public class GaitAnalyserGui extends JFrame{
 				trial = (String) trialBox.getSelectedItem();
 				makLeg =  (String) makBox.getSelectedItem();
 				
-				System.out.println(absolutePath);
-				System.out.println(trial);
-				System.out.println(insoleSize);
-				System.out.println(makLeg);		
-				
+						
 				try {
 					GaitAnalyser.performGaitAnalysis(absolutePath, trial, makLeg, insoleSize);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
+				} catch (Exception e) {					
 					e.printStackTrace();
 				}
 				
@@ -131,9 +140,8 @@ public class GaitAnalyserGui extends JFrame{
 			public void actionPerformed(ActionEvent ae) {
 				
 				try {
-					GaitAnalyser.performGaitAnalysis(absolutePath, trial, makLeg, insoleSize);
+					GaitAnalyser.generateReport(absolutePath);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}	
 			}
@@ -144,14 +152,15 @@ public class GaitAnalyserGui extends JFrame{
 			
 	}
 	
-	
-	
-		
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {
-								   
+				try {								   
 					GaitAnalyserGui frame = new GaitAnalyserGui();
 					frame.setVisible(true);
 				} catch (Exception e) {

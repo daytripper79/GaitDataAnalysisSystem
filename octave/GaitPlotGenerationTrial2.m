@@ -160,18 +160,34 @@ calculatedDataMeanRelativeCopXFree(calculatedDataMeanRelativeCopXFree==0) = nan;
 calculatedDataMeanRelativeCopYFree(calculatedDataMeanRelativeCopYFree==0) = nan;
 
 % CONSTANTS
-imgFoot = imread(path);
-insoleXMak =  max(calculatedDataCopXMak) + 15
-insoleYMak =  max(calculatedDataCopYMak) + 28
-insoleXFree =  max(calculatedDataCopXFree) + 15
-insoleYFree =  max(calculatedDataCopYFree) + 28
+insoleXMak =  max(calculatedDataCopXMak) + 15;
+insoleYMak =  max(calculatedDataCopYMak) + 28;
+insoleXFree =  max(calculatedDataCopXFree) + 15;
+insoleYFree =  max(calculatedDataCopYFree) + 28;
 footPosX = {'ext.' ; '' ; 'int.'};
 footPosY = {'' ;'hindfoot' ; '' ;'middlefoot'; ''; 'forefoot'};
 
-initialTime = calculateDataTime(1);
-finalTime = calculateDataTime(end);
-initialIndex = find(calculatedDataTime == initialTime, 1, 'last')
-finalIndex =   find(calculatedDataTime == finalTime, 1, 'last')
+################################################################################
+
+indexFirstStepMak = 1;
+indexLastStepMak = length(gaitDataStepMak);
+
+indexFirstStepFree = 1;
+indexLastStepFree = length(gaitDataStepFree);
+
+################################################################################
+
+
+firstStepMak = gaitDataStepMak(indexFirstStepMak);
+lastStepMak  = gaitDataStepMak(indexLastStepMak);
+firstStepFree = gaitDataStepFree(indexFirstStepFree);
+lastStepFree  = gaitDataStepFree(indexLastStepFree);
+
+initialTime = gaitInitialTimeMak(indexFirstStepMak);
+finalTime   = gaitDataFinalTimeMak(indexLastStepMak);
+
+initialIndex = find(calculatedDataTime == initialTime, 1, 'last');
+finalIndex =   find(calculatedDataTime == finalTime, 1, 'last');
 
 % PLOT POSITION ANGLE
 figure 
@@ -184,17 +200,16 @@ xlim([initialTime finalTime])
 set(gca, 'xtick', [calculatedDataTime(initialIndex):1:calculatedDataTime(finalIndex)])
 line(xlim(), [max(calculatedDataPositionAngle(initialIndex:finalIndex)) max(calculatedDataPositionAngle(initialIndex:finalIndex))], "linestyle", "--", "color", [0.85 0.078 0.23]);
 line(xlim(), [min(calculatedDataPositionAngle(initialIndex:finalIndex)) min(calculatedDataPositionAngle(initialIndex:finalIndex))], "linestyle", "--", "color", [0.85 0.078 0.23]);
-for i = calculatedDataStepMak(initialIndex):calculatedDataStepMak(finalIndex)
-  if strcmp(gaitInitialPhaseMak(i,1),'STANCE') == 1 
+for i = indexFirstStepMak:2:indexLastStepMak
     line([gaitInitialTimeMak(i) gaitInitialTimeMak(i)], [ylim()], "linestyle", "--", "color", [0.41 0.41 0.41]);
-  end 
 end
 set(gca,'XMinorTick','on','YMinorTick','on')
 set(gca,'yminorgrid','on')
-hgsave(gcf,strcat(inputFile,"position.ofig"))
-print(gcf,strcat(inputFile,"position.png"))
+hgsave(gcf,strcat(inputFile,"_position.ofig"))
+print(gcf,strcat(inputFile,"_position.png"))
 
 hold off
+
 
 % PLOT EULER X
 figure 
@@ -207,17 +222,15 @@ xlim([initialTime finalTime])
 set(gca, 'xtick', [calculatedDataTime(initialIndex):1:calculatedDataTime(finalIndex)])
 line(xlim(), [max(calculatedDataEulerX(initialIndex:finalIndex)) max(calculatedDataEulerX(initialIndex:finalIndex))], "linestyle", "--", "color",  [0.85 0.078 0.23]);
 line(xlim(), [min(calculatedDataEulerX(initialIndex:finalIndex)) min(calculatedDataEulerX(initialIndex:finalIndex))], "linestyle", "--", "color",  [0.85 0.078 0.23]);
-for i = calculatedDataStepMak(initialIndex):calculatedDataStepMak(finalIndex)
-  if strcmp(gaitInitialPhaseMak(i,1),'STANCE') == 1 
+counter = 2;
+for i = indexFirstStepMak:2:indexLastStepMak
     line([gaitInitialTimeMak(i) gaitInitialTimeMak(i)], [ylim()], "linestyle", "--", "color", [0.41 0.41 0.41]);
-  end 
 end
-
 set(gca,'XMinorTick','on','YMinorTick','on')
 set(gca,'yminorgrid','on')
 hold off
-hgsave(gcf,strcat(inputFile,"eulerx.ofig"))
-print(gcf,strcat(inputFile,"eulerx.png"))
+hgsave(gcf,strcat(inputFile,"_eulerx.ofig"))
+print(gcf,strcat(inputFile,"_eulerx.png"))
 
 % PLOT EULER Y
 figure 
@@ -229,16 +242,15 @@ xlim([initialTime finalTime])
 set(gca, 'xtick', [calculatedDataTime(initialIndex):1:calculatedDataTime(finalIndex)])
 line(xlim(), [max(calculatedDataEulerY(initialIndex:finalIndex)) max(calculatedDataEulerY(initialIndex:finalIndex))], "linestyle", "--", "color", [0.85 0.078 0.23]);
 line(xlim(), [min(calculatedDataEulerY(initialIndex:finalIndex)) min(calculatedDataEulerY(initialIndex:finalIndex))], "linestyle", "--", "color", [0.85 0.078 0.23]);
-for i = calculatedDataStepMak(initialIndex):calculatedDataStepMak(finalIndex)
-  if strcmp(gaitInitialPhaseMak(i,1),'STANCE') == 1 
-    line([gaitInitialTimeMak(i) gaitInitialTimeMak(i)], [ylim()], "linestyle", ":", "color", [0.41 0.41 0.41]);
-  end 
+counter = 2;
+for i = indexFirstStepMak:2:indexLastStepMak
+    line([gaitInitialTimeMak(i) gaitInitialTimeMak(i)], [ylim()], "linestyle", "--", "color", [0.41 0.41 0.41]);
 end
 set(gca,'XMinorTick','on','YMinorTick','on')
 set(gca,'yminorgrid','on')
 hold off
-hgsave(gcf,strcat(inputFile,"eulery.ofig"))
-print(gcf,strcat(inputFile,"eulery.png"))
+hgsave(gcf,strcat(inputFile,"_eulery.ofig"))
+print(gcf,strcat(inputFile,"_eulery.png"))
 
 % PLOT INSOLE MAK
 figure
@@ -252,18 +264,16 @@ plot(calculatedDataTime, calculatedDataHeelIntMak, 'LineWidth',2, 'color',[0.99 
 title('Insole pressures by time in MAK')
 ylabel("Insole sensors (millibar)");
 xlabel("Time(s)"); 
-for i = 2:length(gaitInitialTimeMak)
-  if strcmp(gaitInitialPhaseMak(i,1),'STANCE') == 1 
-    line([gaitInitialTimeMak(i) gaitInitialTimeMak(i)], [ylim()], "linestyle", ":", "color", "k");
-  end 
+counter = 2;
+for i = indexFirstStepMak:2:indexLastStepMak
+    line([gaitInitialTimeMak(i) gaitInitialTimeMak(i)], [ylim()], "linestyle", "--", "color", [0.41 0.41 0.41]);
 end
 xlim([initialTime finalTime])
-set(gca, 'xtick', [calculatedDataTime(initialIndex):1:calculatedDataTime(finalIndex)])
 set(gca,'XMinorTick','on','YMinorTick','on')
 set(gca,'yminorgrid','on')
-hgsave(gcf,strcat(inputFile,"gait.ofig"))
+hgsave(gcf,strcat(inputFile,"_gait.ofig"))
 legend({'Hallux', 'Met Ext', 'Met Int', 'Arch', 'Heel Ext', 'Heel Int'},'FontSize',10,'Location','southoutside', 'Orientation','horizontal')
-print(gcf,strcat(inputFile,"gait.png"))
+print(gcf,strcat(inputFile,"_gait.png"))
 hold off;
 
 % PLOT INSOLE FREE
@@ -278,18 +288,17 @@ plot(calculatedDataTime, calculatedDataHeelIntFree, 'LineWidth',2, 'color',[0.99
 title('Insole pressures by time in Free')
 ylabel("Insole sensors (millibar)");
 xlabel("Time(s)"); 
-for i = 2:length(gaitDataInitialTimeFree)
-  if strcmp(gaitInitialPhaseFree(i,1),'STANCE') == 1 
-    line([gaitDataInitialTimeFree(i) gaitDataInitialTimeFree(i)], [ylim()], "linestyle", ":", "color", "k");
-  end 
+counter = 2;
+for i = indexFirstStepFree:2:indexLastStepFree
+    line([gaitDataInitialTimeFree(i) gaitDataInitialTimeFree(i)], [ylim()], "linestyle", "--", "color", [0.41 0.41 0.41]);
 end
 xlim([initialTime finalTime])
 set(gca, 'xtick', [calculatedDataTime(initialIndex):1:calculatedDataTime(finalIndex)])
 set(gca,'XMinorTick','on','YMinorTick','on')
 set(gca,'yminorgrid','on')
-hgsave(gcf,strcat(inputFile,"gaitfree.ofig"))
+hgsave(gcf,strcat(inputFile,"_gaitfree.ofig"))
 legend({'Hallux', 'Met Ext', 'Met Int', 'Arch', 'Heel Ext', 'Heel Int'},'Location','northeastoutside')
-print(gcf,strcat(inputFile,"gaitfree.png"))
+print(gcf,strcat(inputFile,"_gaitfree.png"))
 hold off
 
 % PLOT TOTAL Pressures in sensors by step
@@ -302,6 +311,7 @@ bar(pressureDataStepMak, [pressureDataHalluxTotalMak  pressureDataMetaExtTotalMa
 title('Total pressure in sensors by step MAK')
 legend({'Hallux', 'Met Ext', 'Met Int', 'Arch', 'Heel Int', 'Heel Ext'},'Location','northeastoutside')
 xlabel("Steps"); 
+xlim([firstStepMak lastStepMak])
 ylabel("Sensor's Total pressure(mb)"); 
 set(gca,'XMinorTick','on','YMinorTick','on')
 set(gca,'yminorgrid','on')
@@ -312,12 +322,13 @@ bar(pressureDataStepFree, [pressureDataHalluxTotalFree pressureDataMetaExtTotalF
 title('Total pressure in sensors by step Free')
 legend({'Hallux', 'Met Ext', 'Met Int', 'Arch', 'Heel Int', 'Heel Ext'},'Location','northeastoutside')
 xlabel("Steps"); 
+xlim([firstStepMak lastStepMak])
 ylabel("Sensor's Total pressure(mb)"); 
 set(gca,'XMinorTick','on','YMinorTick','on')
 set(gca,'yminorgrid','on')
 hold off
-hgsave(gcf,strcat(inputFile,"pressuretotal.ofig"))
-print(gcf,strcat(inputFile,"pressuretotal.png"))
+hgsave(gcf,strcat(inputFile,"_pressuretotal.ofig"))
+print(gcf,strcat(inputFile,"_pressuretotal.png"))
 
 % PLOT MAX Pressures in sensors by step
 figure
@@ -331,6 +342,7 @@ bar(pressureDataStepMak, [pressureDataHalluxMak  pressureDataMetaExtMak ...
 title(' pressure in sensors by step MAK')
 legend({'Hallux', 'Met Ext', 'Met Int', 'Arch', 'Heel Int', 'Heel Ext'},'Location','northeastoutside')
 xlabel("Steps"); 
+xlim([firstStepFree lastStepFree])
 ylabel("Sensor's  pressure(mb)"); 
 set(gca,'xtick',[])
 set(gca,'yminorgrid','on')
@@ -342,14 +354,14 @@ bar(pressureDataStepFree, [pressureDataHalluxFree pressureDataMetaExtFree ...
 title('Max pressure in sensors by step Free')
 legend({'Hallux', 'Met Ext', 'Met Int', 'Arch', 'Heel Int', 'Heel Ext'},'Location','northeastoutside')
 xlabel("Steps"); 
+xlim([firstStepFree lastStepFree])
 ylabel("Max Sensor's  pressure(mb)"); 
 set(gca,'xtick',[])
 set(gca,'XMinorTick','on','YMinorTick','on')
 set(gca,'yminorgrid','on')
-xlim([calculatedDataStepMak(initialIndex) calculatedDataStepMak(finalIndex)])
 hold off
-hgsave(gcf,strcat(inputFile,"pressuremax.ofig"))
-print(gcf,strcat(inputFile,"pressuremax.png"))
+hgsave(gcf,strcat(inputFile,"_pressuremax.ofig"))
+print(gcf,strcat(inputFile,"_pressuremax.png"))
 
 
 % PLOT RELATIVE Pressures in sensors by step
@@ -362,10 +374,10 @@ bar(pressureDataStepMak, [pressureDataHalluxRelativeMak  pressureDataMetaExtRela
 title('Relative pressure in sensors by step MAK')
 legend({'Hallux', 'Met Ext', 'Met Int', 'Arch', 'Heel Int', 'Heel Ext'},'Location','northeastoutside')
 xlabel("Steps"); 
+xlim([firstStepMak lastStepMak])
 ylabel("Sensor's Relative pressure(mb)"); 
 set(gca,'xtick',[])
 set(gca,'yminorgrid','on')
-xlim([calculatedDataStepMak(initialIndex) calculatedDataStepMak(finalIndex)])
 ax2 = subplot(2,1,2);
 bar(pressureDataStepFree, [pressureDataHalluxRelativeFree pressureDataMetaExtRelativeFree ...
                            pressureDataMetaIntermRelativeFree pressureDataArchRelativeFree ...
@@ -373,12 +385,13 @@ bar(pressureDataStepFree, [pressureDataHalluxRelativeFree pressureDataMetaExtRel
 title('Relative pressure in sensors by step Free')
 legend({'Hallux', 'Met Ext', 'Met Int', 'Arch', 'Heel Int', 'Heel Ext'},'Location','northeastoutside')
 xlabel("Steps"); 
+xlim([firstStepFree lastStepFree])
 ylabel("Sensor's Relative pressure(mb)"); 
 set(gca,'XMinorTick','on','YMinorTick','on')
 set(gca,'yminorgrid','on')
 hold off
-hgsave(gcf,strcat(inputFile,"pressurerel.ofig"))
-print(gcf,strcat(inputFile,"pressurerel.png"))
+hgsave(gcf,strcat(inputFile,"_pressurerel.ofig"))
+print(gcf,strcat(inputFile,"_pressurerel.png"))
 
 
 % PLOT COP X MAK(%)
@@ -389,8 +402,11 @@ plot(calculatedDataTime, calculatedDataCopXMak, 'LineWidth',1,'color',[0.41 0.35
 title('Cop X position by Time Mak')
 xlabel("Time(s)"); 
 ylabel("CoP X position"); 
-xlim([initialTime finalTime])
-set(gca, 'xtick', [calculatedDataTime(initialIndex):1:calculatedDataTime(finalIndex)] ,'xticklabel')
+xlim([firstStepFree lastStepFree])
+set(gca, 'xtick', [calculatedDataTime(initialIndex):1:calculatedDataTime(finalIndex)])
+for i = indexFirstStepMak:2:indexLastStepMak
+    line([gaitInitialTimeMak(i) gaitInitialTimeMak(i)], [ylim()], "linestyle", "--", "color", [0.41 0.41 0.41]);
+end
 ylim([0 insoleXMak])
 range = insoleXMak/2;
 set(gca, 'ytick', [0 range insoleXMak] ,'yticklabel',footPosX)
@@ -409,11 +425,14 @@ set(gca, 'xtick', [calculatedDataTime(initialIndex):1:calculatedDataTime(finalIn
 ylim([0 insoleYMak])
 set(gca, 'yticklabel',footPosY)
 ylim([0 insoleYMak])
-range = insoleYMak/6
+range = insoleYMak/6;
+for i = indexFirstStepMak:2:indexLastStepMak
+    line([gaitInitialTimeMak(i) gaitInitialTimeMak(i)], [ylim()], "linestyle", "--", "color", [0.41 0.41 0.41]);
+end
 set(gca, 'ytick', 0:range:insoleYMak ,'yticklabel',footPosY)
 grid on
-hgsave(gcf,strcat(inputFile,"cop.ofig"))
-print(gcf,strcat(inputFile,"cop.png"))
+hgsave(gcf,strcat(inputFile,"_cop.ofig"))
+print(gcf,strcat(inputFile,"_cop.png"))
 
 hold off
 
@@ -430,6 +449,9 @@ xlim([initialTime finalTime])
 set(gca, 'xtick', [calculatedDataTime(initialIndex):1:calculatedDataTime(finalIndex)])
 ylim([0 insoleXFree])
 range = insoleXFree/2;
+for i = indexFirstStepFree:2:indexLastStepFree
+    line([gaitDataInitialTimeFree(i) gaitDataInitialTimeFree(i)], [ylim()], "linestyle", "--", "color", [0.41 0.41 0.41]);
+end
 set(gca, 'ytick', [0 range insoleXFree] ,'yticklabel',footPosX)
 grid on
 hold off
@@ -444,11 +466,14 @@ ylabel("CoP Y posotion");
 xlim([initialTime finalTime])
 set(gca, 'xtick', [calculatedDataTime(initialIndex):1:calculatedDataTime(finalIndex)])
 ylim([0 insoleYFree])
-range = insoleYFree/6
+range = insoleYFree/6;
+for i = indexFirstStepFree:2:indexLastStepFree
+    line([gaitDataInitialTimeFree(i) gaitDataInitialTimeFree(i)], [ylim()], "linestyle", "--", "color", [0.41 0.41 0.41]);
+end
 set(gca, 'ytick', 0:range:insoleYFree ,'yticklabel',footPosY)
 grid on
-hgsave(gcf,strcat(inputFile,"copfree.ofig"))
-print(gcf,strcat(inputFile,"copfree.png"))
+hgsave(gcf,strcat(inputFile,"_copfree.ofig"))
+print(gcf,strcat(inputFile,"_copfree.png"))
 
 hold off
 
@@ -487,11 +512,11 @@ for i = gaitDataStepMak(1):2:gaitDataStepMak(length(gaitDataStepMak))
   
   x = calculatedDataCopXMak(initialIndex:finalIndex);
   xlim([0 insoleXMak])
-  range = insoleXMak/2
+  range = insoleXMak/2;
   set(gca, 'xtick', [0 range insoleXMak] ,'xticklabel',footPosX)
   y = calculatedDataCopYMak(initialIndex:finalIndex);
   ylim([0 insoleYMak])
-  range = insoleYMak/6
+  range = insoleYMak/6;
   set(gca, 'ytick', 0:range:insoleYMak ,'yticklabel',footPosY)
   z = calculatedDataTime(initialIndex:finalIndex);  
   surf([x(:) x(:)], [y(:) y(:)], [z(:) z(:)], 'FaceColor', 'none', 'EdgeColor', 'interp', 'LineWidth', 3)
@@ -500,9 +525,9 @@ for i = gaitDataStepMak(1):2:gaitDataStepMak(length(gaitDataStepMak))
   set(cbh,'YTick', [], 'YLabel', 'Time progression')
   grid on
   hold off
-  hgsave(gcf,strcat(inputFile,"stepcop-", str, ".ofig"))
   str = sprintf('%d', i);
-  print(gcf,strcat(inputFile,"stepcop-", str, ".png"))
+  hgsave(gcf,strcat(inputFile,"_stepcop-", str, ".ofig"))
+  print(gcf,strcat(inputFile,"_stepcop-", str, ".png"))
 
   
   figure
@@ -525,9 +550,9 @@ for i = gaitDataStepMak(1):2:gaitDataStepMak(length(gaitDataStepMak))
   grid on
   hold off
   str = sprintf('%d', i);
-  hgsave(gcf,strcat(inputFile,"step-", str, ".ofig"))
+  hgsave(gcf,strcat(inputFile,"_step-", str, ".ofig"))
   legend({'Hallux', 'Met Ext', 'Met Int', 'Arch', 'Heel Int', 'Heel Ext'},'Location','southoutside', 'Orientation','horizontal')
-  print(gcf,strcat(inputFile,"step-", str, ".png"))
+  print(gcf,strcat(inputFile,"_step-", str, ".png"))
 
   
 end
@@ -580,8 +605,8 @@ for i = initial:2:gaitDataStepFree(length(gaitDataStepFree))
   grid on
   hold off
   str = sprintf('%d', i);
-  hgsave(gcf,strcat(inputFile,"stepcopfree-", str, ".ofig"))
-  print(gcf,strcat(inputFile,"stepcopfree-", str, ".png"))
+  hgsave(gcf,strcat(inputFile,"_stepcopfree-", str, ".ofig"))
+  print(gcf,strcat(inputFile,"_stepcopfree-", str, ".png"))
 
   figure
   % PLOT Isolated Step
@@ -601,10 +626,10 @@ for i = initial:2:gaitDataStepFree(length(gaitDataStepFree))
   xlabel(ax2,"Time(s)"); 
   grid on
   str = sprintf('%d', i);
-  hgsave(gcf,strcat(inputFile,"stepfree-", str, ".ofig"))
+  hgsave(gcf,strcat(inputFile,"_stepfree-", str, ".ofig"))
   legend({'Hallux', 'Met Ext', 'Met Int', 'Arch', 'Heel Ext', 'Heel Int'},'FontSize',10,'Location','southoutside', 'Orientation','horizontal')
   hold off
-  print(gcf,strcat(inputFile,"stepfree-", str, ".png"))
+  print(gcf,strcat(inputFile,"_stepfree-", str, ".png"))
   
 end
 end

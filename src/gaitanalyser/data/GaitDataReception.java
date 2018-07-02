@@ -1,87 +1,194 @@
-package gaitanalyser.data;
+ package gaitanalyser.data;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.PrintStream;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.json.simple.parser.ParseException;
 
+/**
+ * The Class GaitDataReception receives the file fileName.txt as input, as
+	well as the number of data sent by sample. Then, the parsing of this file, taking
+	into account the requirements explained previously is performed. The first output
+	is the file fileName_raw.txt. Taking into account the possibility of problems of
+	synchronization during the data reception, a second processing is applied to the file
+	fileName_raw.txt, where the detected corrupted samples are deleted. The output
+	file will be called fileName_raw.without_errors.txt. Both are text files with .csv
+	format. In these files, each of the columns corresponds to a channel associated with
+	a data sensor.
+ */
 public class GaitDataReception{
 	
+	/** The wifi mode. */
 	private boolean WIFI_MODE = false;
 
+	/** The eof. */
 	private boolean EOF = false;
 
+	/** The page size. */
 	private static int PAGE_SIZE = 264;
 
+	/** The type int. */
 	final private int TYPE_INT	   = 1;
+	
+	/** The type long. */
 	final private int TYPE_LONG    = 2;
+	
+	/** The type float. */
 	final private int TYPE_FLOAT   = 3;
+	
+	/** The type double. */
 	final private int TYPE_DOUBLE  = 4;
 	
+	/** The open parenthesis. */
 	final private int OPEN_PARENTHESIS = 40; 
+	
+	/** The close parenthesis. */
 	final private int CLOSE_PARENTHESIS = 41;
+	
+	/** The hash error. */
 	final private int HASH_ERROR = 35;
 
 
+	/** The timestamp. */
 	final private int TIMESTAMP      	               =  0;
 	
+	/** The motor position. */
 	final private int MOTOR_POSITION                   =  1;
+	
+	/** The motor torque. */
 	final private int MOTOR_TORQUE                     =  2;
+	
+	/** The insole sensor 1. */
 	final private int INSOLE_SENSOR_1                  =  3;
+	
+	/** The insole sensor 2. */
 	final private int INSOLE_SENSOR_2                  =  4;
+	
+	/** The insole sensor 3. */
 	final private int INSOLE_SENSOR_3                  =  5;
+	
+	/** The insole sensor 4. */
 	final private int INSOLE_SENSOR_4                  =  6;
+	
+	/** The insole sensor 5. */
 	final private int INSOLE_SENSOR_5                  =  7;
+	
+	/** The insole sensor 6. */
 	final private int INSOLE_SENSOR_6                  =  8;
+	
+	/** The insole sensor 7. */
 	final private int INSOLE_SENSOR_7                  =  9;
+	
+	/** The insole sensor 8. */
 	final private int INSOLE_SENSOR_8                  = 10;
+	
+	/** The sensor orientation euler x. */
 	final private int SENSOR_ORIENTATION_EULER_X       = 11;
+	
+	/** The sensor orientation euler y. */
 	final private int SENSOR_ORIENTATION_EULER_Y       = 12;
+	
+	/** The sensor orientation euler z. */
 	final private int SENSOR_ORIENTATION_EULER_Z       = 13;
+	
+	/** The sensor orientation quaternion x. */
 	final private int SENSOR_ORIENTATION_QUATERNION_X  = 14;
+	
+	/** The sensor orientation quaternion y. */
 	final private int SENSOR_ORIENTATION_QUATERNION_Y  = 15;
+	
+	/** The sensor orientation quaternion z. */
 	final private int SENSOR_ORIENTATION_QUATERNION_Z  = 16;
+	
+	/** The sensor orientation quaternion w. */
 	final private int SENSOR_ORIENTATION_QUATERNION_W  = 17;
+	
+	/** The motor current. */
 	final private int MOTOR_CURRENT                    = 18;
+	
+	/** The motor overload. */
 	final private int MOTOR_OVERLOAD                   = 19;
+	
+	/** The motor speed. */
 	final private int MOTOR_SPEED                      = 20;
+	
+	/** The speed. */
 	final private int SPEED            		   		   = 21;  
+	
+	/** The battery charge. */
 	final private int BATTERY_CHARGE                   = 22;
+	
+	/** The temperature. */
 	final private int TEMPERATURE                      = 23;
+	
+	/** The insole 2sensor 1. */
 	final private int INSOLE_2SENSOR_1                 = 24;
+	
+	/** The insole 2sensor 2. */
 	final private int INSOLE_2SENSOR_2                 = 25;
+	
+	/** The insole 2sensor 3. */
 	final private int INSOLE_2SENSOR_3                 = 26;
+	
+	/** The insole 2sensor 4. */
 	final private int INSOLE_2SENSOR_4                 = 27;
+	
+	/** The insole 2sensor 5. */
 	final private int INSOLE_2SENSOR_5                 = 28;
+	
+	/** The insole 2sensor 6. */
 	final private int INSOLE_2SENSOR_6                 = 29;
+	
+	/** The insole 2sensor 7. */
 	final private int INSOLE_2SENSOR_7                 = 30;
+	
+	/** The insole 2sensor 8. */
 	final private int INSOLE_2SENSOR_8                 = 31;
 
 
 	// NEGATIVE_MASK and NUM_ELEMENTS must have same value
+	/** The num elements. */
 	// to assure that headers don't overlap.
 	private int NUM_ELEMENTS = 32;
+	
+	/** The negative mask. */
 	private int NEGATIVE_MASK = 32;
 	
+	/** The num of channels. */
 	private int numOfChannels;
 
+	/** The data collection. */
 	private int[]  dataCollection;
 	
+	/** The file path. */
 	private String filePath;
+	
+	/** The file name. */
 	private String fileName;
 
+	/** The buffer. */
 	private BufferedReader buffer;
+	
+	/** The buffer bin. */
 	private FileInputStream bufferBin;
 
+    /** The file out. */
     private static PrintStream fileOut;    
+    
+    /** The file out final. */
     private static PrintStream fileOutFinal;
 
 	
+	/**
+	 * Instantiates a new gait data reception.
+	 *
+	 * @param filePath the file path
+	 * @param wifiMode the wifi mode
+	 * @param numOfChannels the num of channels
+	 * @throws Exception the exception
+	 */
 	public GaitDataReception(String filePath, boolean wifiMode, int numOfChannels) throws Exception {
 		
 		dataCollection = new int[NUM_ELEMENTS];
@@ -138,6 +245,11 @@ public class GaitDataReception{
 	}
 
 
+	/**
+	 * Read txt flash.
+	 *
+	 * @throws Exception the exception
+	 */
 	public void readTxtFlash() throws Exception {
 
 		System.out.println("readTxtFlash()");
@@ -251,6 +363,11 @@ public class GaitDataReception{
 	}
 	
 	
+	/**
+	 * Read txt wifi.
+	 *
+	 * @throws Exception the exception
+	 */
 	public void readTxtWifi() throws Exception {
 
 		System.out.println("readTxtWifi()");
@@ -335,6 +452,9 @@ public class GaitDataReception{
 	}
 	
 	
+	/**
+	 * Write channels.
+	 */
 	private void writeChannels(){
 		
 		String fileHeader = "Time";
@@ -346,6 +466,11 @@ public class GaitDataReception{
 		fileOut.print(fileHeader);	
 	}
 
+	/**
+	 * Clean invalid lines.
+	 *
+	 * @throws Exception the exception
+	 */
 	private void cleanInvalidLines() throws Exception {
 		
 		System.out.println("cleanInvalidLines()");
@@ -375,6 +500,12 @@ public class GaitDataReception{
 		
 	}	
 	
+	/**
+	 * Parses the int value.
+	 *
+	 * @return the int
+	 * @throws Exception the exception
+	 */
 	private int parseIntValue() throws Exception{
 		
 		byte[] data = new byte[1];
@@ -390,6 +521,11 @@ public class GaitDataReception{
 		return dataValue;
 	}
 	
+	/**
+	 * Generate txt file.
+	 *
+	 * @throws Exception the exception
+	 */
 	public void generateTxtFile() throws Exception {
 					
 		System.out.println("Begin conversion from binary file...");
@@ -405,16 +541,6 @@ public class GaitDataReception{
     	System.out.println("Conversion done.");
 		
 	}
-	
-      
-   public static void main(String args[]) throws IOException, InvalidFormatException, ParseException, Exception {
-		   
-	   String inputFile = "D:\\Ven sube a mi nube\\BME\\TFM\\Datas\\MAK-HAM-TRIAL-4-DATA_SELECTION_F0\\6NA_mbd-20180516-165857_fixed.txt";
-	   System.out.println("Input File: " + inputFile);
-	   
-	   GaitDataReception receptionDatas = new GaitDataReception(inputFile, true, 17);
-	   receptionDatas.generateTxtFile();	 
-   }     
 	   
 }     
 	
