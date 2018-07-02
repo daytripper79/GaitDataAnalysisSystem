@@ -1,6 +1,6 @@
 # GaitDataAnalysisSystem
 
-This software has been developed on the occasion of the master’s Thesis 
+This software has been developed on the occasion of the Master’s Thesis 
 
 "PROCESSING OF SENSOR DATA FOR HEALTH MONITORING 
 AND INTEND OF MOTION DETECTION IN ROBOTIC ORTHESES" 
